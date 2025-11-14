@@ -37,13 +37,13 @@ const ValueProposition = () => {
   const reduceMotion = useReducedMotion();
 
   const [disableAnim, setDisableAnim] = useState(false);
-  useEffect(() => {
-    try {
-      const played = sessionStorage.getItem("vpPlayed");
-      if (played) setDisableAnim(true);
-      else sessionStorage.setItem("vpPlayed", "1");
-    } catch (e) {}
-  }, []);
+  // useEffect(() => {
+  //   try {
+  //     const played = sessionStorage.getItem("vpPlayed");
+  //     if (played) setDisableAnim(true);
+  //     else sessionStorage.setItem("vpPlayed", "1");
+  //   } catch (e) {}
+  // }, []);
 
   const headerVariants = {
     hidden: { opacity: 0, y: -30 },
