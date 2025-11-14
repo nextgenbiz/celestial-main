@@ -4,18 +4,18 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, useScroll } from "framer-motion";
 
 export default function StrategicEdge() {
-
     const [disableAnim, setDisableAnim] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
         const alreadyAnimated = sessionStorage.getItem("strategicEdgePlayed");
         if (alreadyAnimated) {
-            setDisableAnim(true);  
+            setDisableAnim(true);
         } else {
             sessionStorage.setItem("strategicEdgePlayed", "true");
         }
+        setIsMounted(true);
     }, []);
-
 
     const [isPaused, setIsPaused] = useState(false);
     const scrollContainerRef = useRef(null);
@@ -101,6 +101,27 @@ export default function StrategicEdge() {
         visible: { opacity: 1, y: 0, transition: { duration: 0.7 } }
     };
 
+    // Don't render until component is mounted to avoid hydration issues
+    if (!isMounted) {
+        return (
+            <div className="relative min-h-screen bg-[#F8FAFC] overflow-hidden py-16 md:py-24">
+                <div className="relative z-10 max-w-7xl mx-auto px-6">
+                    <div className="text-center max-w-3xl mx-auto">
+                        <p className="inline-block text-xs font-bold text-black uppercase tracking-[0.2em] mb-4 px-4 py-2 bg-[#B0DB9C]/10 rounded-full border border-[#B0DB9C]/30">
+                            Our Strategic Edge
+                        </p>
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#27391C] tracking-tight leading-tight mb-5">
+                            Driving Innovation <br className="hidden sm:block" />
+                            <span className="bg-gradient-to-r from-[#27391C] to-[#B0DB9C] bg-clip-text text-transparent">
+                                with Sustainable Solutions
+                            </span>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <>
             <style jsx global>{`
@@ -112,23 +133,23 @@ export default function StrategicEdge() {
             <div ref={sectionRef} className="relative min-h-screen bg-[#F8FAFC] overflow-hidden py-16 md:py-24">
 
                 <motion.div
-                    initial={disableAnim ? {} : { scale: 0.5, opacity: 0 }}
-                    animate={disableAnim ? {} : isInView ? {
+                    initial={disableAnim ? { scale: 1, opacity: 0.6 } : { scale: 0.5, opacity: 0 }}
+                    animate={disableAnim ? { scale: 1, opacity: 0.6 } : isInView ? {
                         scale: [0.5, 1, 0.9, 1],
                         opacity: [0, 0.6, 0.4, 0.6],
                         y: [0, -20, 0]
-                    } : {}}
+                    } : { scale: 0.5, opacity: 0 }}
                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-gradient-radial from-[#B0DB9C]/30 to-transparent blur-3xl"
                 />
 
                 <motion.div
-                    initial={disableAnim ? {} : { scale: 0.3, opacity: 0 }}
-                    animate={disableAnim ? {} : isInView ? {
+                    initial={disableAnim ? { scale: 0.8, opacity: 0.5 } : { scale: 0.3, opacity: 0 }}
+                    animate={disableAnim ? { scale: 0.8, opacity: 0.5 } : isInView ? {
                         scale: [0.3, 0.8, 0.7, 0.8],
                         opacity: [0, 0.5, 0.3, 0.5],
                         y: [0, 25, 0]
-                    } : {}}
+                    } : { scale: 0.3, opacity: 0 }}
                     transition={{ duration: 8, delay: 0.5, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-gradient-radial from-[#27391C]/20 to-transparent blur-3xl"
                 />
@@ -136,11 +157,11 @@ export default function StrategicEdge() {
                 <div className="relative z-10 max-w-7xl mx-auto px-6 mb-12 md:mb-16">
                     <motion.div
                         className="text-center max-w-3xl mx-auto"
-                        initial={disableAnim ? {} : { opacity: 0, y: 30 }}
-                        animate={disableAnim ? {} : isInView ? { opacity: 1, y: 0 } : {}}
+                        initial={disableAnim ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                        animate={disableAnim ? { opacity: 1, y: 0 } : isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        <p className="inline-block text-xs font-bold text-[#27391C] uppercase tracking-[0.2em] mb-4 px-4 py-2 bg-[#B0DB9C]/10 rounded-full border border-[#B0DB9C]/30">
+                        <p className="inline-block text-xs font-bold text-black uppercase tracking-[0.2em] mb-4 px-4 py-2 bg-[#B0DB9C]/10 rounded-full border border-[#B0DB9C]/30">
                             Our Strategic Edge
                         </p>
                         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#27391C] tracking-tight leading-tight mb-5">
@@ -157,15 +178,14 @@ export default function StrategicEdge() {
                     <motion.div
                         className="w-24 h-1.5 mx-auto bg-gradient-to-r from-[#B0DB9C] to-[#27391C] mt-6 rounded-full"
                         variants={headerVariants}
-                        initial={disableAnim ? {} : { width: 0 }}
-                        whileInView={disableAnim ? {} : { width: 96 }}
+                        initial={disableAnim ? { width: 96 } : { width: 0 }}
+                        whileInView={disableAnim ? { width: 96 } : { width: 96 }}
                         transition={{ duration: 0.8, delay: 0.5 }}
                         viewport={{ once: true }}
                     />
                 </div>
 
                 <div className="relative pb-8">
-
                     <div
                         ref={scrollContainerRef}
                         className="flex overflow-x-auto gap-6 py-8 items-center scrollbar-hide"
@@ -185,8 +205,8 @@ export default function StrategicEdge() {
                             <motion.div
                                 key={index}
                                 className="relative flex-shrink-0 w-[340px] sm:w-[360px] cursor-pointer"
-                                initial={disableAnim ? {} : { opacity: 0, y: 40 }}
-                                animate={disableAnim ? {} : isInView ? { opacity: 1, y: 0 } : {}}
+                                initial={disableAnim ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                                animate={disableAnim ? { opacity: 1, y: 0 } : isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
                                 transition={{ duration: 0.6, delay: (index % 6) * 0.08 }}
                             >
                                 <motion.div
@@ -228,8 +248,8 @@ export default function StrategicEdge() {
 
                     <motion.div
                         className="text-center mt-8"
-                        initial={disableAnim ? {} : { opacity: 0, y: 20 }}
-                        animate={disableAnim ? {} : isInView ? { opacity: 1, y: 0 } : {}}
+                        initial={disableAnim ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        animate={disableAnim ? { opacity: 1, y: 0 } : isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                         transition={{ duration: 0.5, delay: 0.8 }}
                     >
                         <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white rounded-full border border-[#B0DB9C]/30 shadow-sm">
